@@ -1,9 +1,16 @@
 import React from "react"
 import { Link } from "react-router-dom"
 import ImageKit from "./Image"
+import {
+    QueryClient,
+    QueryClientProvider,
+    useQuery,
+  } from '@tanstack/react-query'
 
 
 const PostListItem = () => {
+
+
     return(
         <div className="flex flex-col lg:flex-row xl:flex-row gap-8">
             {/* Image */}

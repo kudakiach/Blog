@@ -2,11 +2,13 @@ import { useState } from "react"
 import { IKImage } from "imagekitio-react"
 import ImageKit from "./Image";
 import { Link } from "react-router-dom";
-import { SignOutButton, SignedOut, SignedIn, UserButton } from "@clerk/clerk-react";
+import { SignOutButton, SignedOut, SignedIn, UserButton, useAuth  } from "@clerk/clerk-react";
 
 
 const Navbar = () => {
     const [open, setOpen] = useState(false);
+    const token = useAuth().getToken()
+    console.log(token)
     return (
         <div className="w-full h-16 md:h-20 flex items-center justify-between">
             {/* Logo */}
