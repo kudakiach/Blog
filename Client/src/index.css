@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    
+    background-color: #f4dcf3;
+    width:100vw;
+   overflow-x: hidden;
+    font-family: "Monseratt", sans-serif;
+}
+
+.ql-container{
+    border:none !important;
+    background-color: white !important;
+    width: 100%;
+}
