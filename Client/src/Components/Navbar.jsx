@@ -13,6 +13,7 @@ const Navbar = () => {
         <div className="w-full h-16 md:h-20 flex items-center justify-between">
             {/* Logo */}
             <Link to='/' className="flex items-center gap-4 text-2xl font-bold" >
+               
                 <img src="logo.png" alt="kuda logo" className="w-8 h-8" />
                 <span className="bg-blue-800 py-1 px-2 rounded-xl text-red-200">KudaBlog</span>
             </Link>

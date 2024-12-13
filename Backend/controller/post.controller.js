@@ -1,10 +1,15 @@
 const express = require("express")
 const Post = require("../models/post.model")
 const User = require("../models/user.model");
+const ImageKit = require("imagekit")
 
 const { clerkMiddleware, requireAuth } = require('@clerk/express');
 
-
+const imagekit = new ImageKit({
+    publicKey : 'public_7WC+BTeMSRGlZCZd+h6bgM5al14=',
+    privateKey : 'private_pr+fSyO3odNn83MBJOVrxPFi9ys=',
+    urlEndpoint :'https://ik.imagekit.io/brm83yziu'
+});
 
 const getPosts = async (req, res) => {
     const posts = await Post.find();
@@ -15,6 +20,8 @@ const getPost = async (req, res) => {
     const post = await Post.findOne({slug:req.params.slug});
     res.status(200).json(post)
 }
+
+
 
 const createPost = async (req, res) => {
 
@@ -69,9 +76,18 @@ const deletePost = async (req, res) => {
 }
 
 
+const uploadAuth =  (req, res) => {
+    var result =  imagekit.getAuthenticationParameters();
+    console.log(result)
+        res.send(result)
+   
+}
+
+
 module.exports = {
     getPost,
     getPosts,
     createPost,
-    deletePost
+    deletePost,
+    uploadAuth
 }

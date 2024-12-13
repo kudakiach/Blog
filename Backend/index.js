@@ -3,6 +3,7 @@ require('dotenv').config();
 const bodyParser = require('body-parser')
 const { clerkMiddleware, requireAuth } = require('@clerk/express')
 const cors = require("cors")
+const ImageKit = require('imagekit');
 
 
 // Routers
@@ -16,14 +17,19 @@ const ConnectDB = require("./lib/connectDB")
 
 const app = express();
 
+// allow cross-origin requests
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", 
+      "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
 app.use(clerkMiddleware())
 
-app.use(cors());
 
 app.use('/webhooks', webhookRoutes)
 app.use(express.json())
-
-
 
 // Routes Midleware
 app.use('/users',userRoutes)
