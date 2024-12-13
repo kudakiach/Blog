@@ -16,12 +16,14 @@ const ConnectDB = require("./lib/connectDB")
 
 const app = express();
 
+app.use(clerkMiddleware())
+
 app.use(cors());
 
 app.use('/webhooks', webhookRoutes)
 app.use(express.json())
 
-app.use(clerkMiddleware())
+
 
 // Routes Midleware
 app.use('/users',userRoutes)

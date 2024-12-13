@@ -21,7 +21,12 @@ const postSchema =  new Schema({
         unique:true
     },
     desc:{
-        type:[String],
+        type:String,
+                
+    },
+    category:{
+        type:String,
+        default:'general'
                 
     },
     content:{
