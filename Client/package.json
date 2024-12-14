@@ -17,14 +17,17 @@
     "@tanstack/react-query": "^5.62.3",
     "@tanstack/react-query-devtools": "^5.62.3",
     "axios": "^1.7.9",
+    "dompurify": "^3.2.3",
     "imagekitio-react": "^4.2.0",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-icons": "^5.4.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-quill": "^2.0.0",
     "react-quill-new": "^3.3.3",
     "react-router-dom": "^7.0.2",
-    "react-toastify": "^10.0.6"
+    "react-toastify": "^10.0.6",
+    "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

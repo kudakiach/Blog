@@ -17,6 +17,7 @@ const ConnectDB = require("./lib/connectDB")
 
 const app = express();
 
+
 // allow cross-origin requests
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -24,6 +25,7 @@ app.use(function(req, res, next) {
       "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
+  app.use(cors())
 
 app.use(clerkMiddleware())
 

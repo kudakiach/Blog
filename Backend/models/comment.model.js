@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Post = require("../models/post.model")
 const { Schema } = mongoose;
 
-const userSchema =  new Schema({
+const commentSchema =  new Schema({
     user: {
         type:Schema.Types.ObjectId,
         ref:"User",
@@ -16,7 +16,7 @@ const userSchema =  new Schema({
         required:true,
     },
    
-    desc:{
+    comment:{
         type:String,
       
     }
@@ -25,4 +25,4 @@ const userSchema =  new Schema({
 
 )
 
-module.exports = mongoose.model(userSchema);
+module.exports = mongoose.model("Comment", commentSchema);

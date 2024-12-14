@@ -1,21 +1,139 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from 'axios'
+import { useParams } from "react-router-dom";
+import { useQuery, QueryClient, useQueryClient, useMutation  } from "@tanstack/react-query"
+import Comment from "./Comment";
+import { toast } from "react-toastify";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 
-const Comments = () => {
+
+const fetchComments = async (postId) => {
+    //${import.meta.env.VITE_API_URL}
+    const res = await axios.get(`http://localhost:3000/comments/${postId}`)
+    console.log(res.data)
+    return res.data
+}
+
+const Comments = ({postId}) => {
+
+    const {isLoaded, isSignedIn, getToken} = useAuth();
+    const [session, setSession] = useState("");
+    // const [comments, setComments] = useState({comment:''})
+    const {user} = useUser();
+    
+
+    const { isPending, error, data } = useQuery({
+        queryKey: ["comments", postId],
+        queryFn: () => fetchComments(postId),
+    })
+
+   
+    getToken().then( token=>
+        setSession(token)
+    )
+    const queryClient = useQueryClient();
+    const mutation =  useMutation({
+       
+        mutationFn: async (newComment) => {
+            const token = getToken();
+            
+           return await axios.post(`http://localhost:3000/comments/${postId}`, newComment,
+            { 
+             headers: {
+                Authorization:`Bearer ${session}`
+             }
+ 
+            }
+           )
+         },
+         onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["comments", postId]})
+         }
+
+        
+     })
+
+     const handleCommentSubmit = e => {
+        e.preventDefault()
+
+        const formData = new FormData(e.target);
+
+        const comments = {
+            comment:formData.get("comment")
+        }
+        
+        mutation.mutate(comments, {
+            onSuccess: () => {
+                toast.success("Comment Sent")
+                e.target.reset();
+            }, 
+            onError:(error) => {
+                toast.error("Failed to Comment" + error)
+            }
+        })
+        
+        
+    }
+
+    //   
+
+    if (isPending) return "Loading...";
+    if (error) return "Something went wrong" + error.message;
+    if (!data) return "Post not Found";
+    
+    
+    if(!isLoaded) {
+        return <div>Loading...</div>
+    }
+ 
+    if(isLoaded && !isSignedIn) {
+        return <div>You are not sign in</div>
+    }
+    
+    
+
+
     return (
 
-        <div className="mt-8 bg-gray-100  p-2 rounded-xl shadow-xl">
-            <div className="flex gap-4 items-center text-sm text-gray-400">
-                <img src="userImg.jpeg" className="object-cover w-12 h-12 rounded-full" />
-                <span className="font-medium text-gray-700">John Doe</span>
-                <span>2 days ago</span>
-            </div>
-            <p className="mt-2 font-extralight text-sm">
-                ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim
-            </p>
+        <div>
+            <h1 className="underline mb-4 text-2xl font-bold mt-3">Comments</h1>
+            <form onSubmit={handleCommentSubmit} className="flex gap-8">
+                <textarea className="w-2/3 rounded-md p-2" name="comment" placeholder="Leave a Comment">
+
+                </textarea>
+                <button className="p-2 bg-blue-800 w-1/5 text-white rounded-2xl">
+                   <span className="font-bold text-2xl">Send</span> 
+                </button>
+            </form>
+
+            {
+                isPending ? ("loading..."): error ? (
+                    "Error Loading Comments"
+                ): (
+                <>
+                {mutation.isPending && (
+                    <Comment 
+                        comment={{
+                            comment: `${mutation.variables.comment} (Sending...)`,
+                            createdAt: new Date(),
+                            user: {
+                                img: user.imageUrl,
+                                username:user.username,
+                            },
+                        }}
+                
+                    />
+                )}
+                {data.map((comment) => (
+                    <Comment data={comment} />  
+                ))} 
+            
+                </>
+            )}
         </div>
     )
+    
 }
 
 export default Comments
