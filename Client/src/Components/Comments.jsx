@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useQuery, QueryClient, useQueryClient, useMutation  } from "@tanstack/react-query"
 import Comment from "./Comment";
 import { toast } from "react-toastify";
-import { useAuth, useUser } from "@clerk/clerk-react";
+import { useAuth, useUser,  } from "@clerk/clerk-react";
 
 
 
@@ -17,12 +17,14 @@ const fetchComments = async (postId) => {
 
 const Comments = ({postId}) => {
 
+   
     const {isLoaded, isSignedIn, getToken} = useAuth();
     const [session, setSession] = useState("");
     // const [comments, setComments] = useState({comment:''})
-    const {user} = useUser();
+  
     
-
+    const { user } = useUser();
+    
     const { isPending, error, data } = useQuery({
         queryKey: ["comments", postId],
         queryFn: () => fetchComments(postId),
@@ -32,11 +34,12 @@ const Comments = ({postId}) => {
     getToken().then( token=>
         setSession(token)
     )
+
     const queryClient = useQueryClient();
     const mutation =  useMutation({
        
         mutationFn: async (newComment) => {
-            const token = getToken();
+            
             
            return await axios.post(`http://localhost:3000/comments/${postId}`, newComment,
             { 
@@ -47,10 +50,10 @@ const Comments = ({postId}) => {
             }
            )
          },
-         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["comments", postId]})
+         
+         onSuccess:()=>{
+            queryClient.invalidateQueries({queryKey:["comments", postId]})
          }
-
         
      })
 
@@ -78,22 +81,6 @@ const Comments = ({postId}) => {
 
     //   
 
-    if (isPending) return "Loading...";
-    if (error) return "Something went wrong" + error.message;
-    if (!data) return "Post not Found";
-    
-    
-    if(!isLoaded) {
-        return <div>Loading...</div>
-    }
- 
-    if(isLoaded && !isSignedIn) {
-        return <div>You are not sign in</div>
-    }
-    
-    
-
-
     return (
 
         <div>
@@ -114,19 +101,21 @@ const Comments = ({postId}) => {
                 <>
                 {mutation.isPending && (
                     <Comment 
-                        comment={{
+                        data={{
                             comment: `${mutation.variables.comment} (Sending...)`,
                             createdAt: new Date(),
                             user: {
                                 img: user.imageUrl,
                                 username:user.username,
                             },
+                            
                         }}
+                        
                 
                     />
                 )}
                 {data.map((comment) => (
-                    <Comment data={comment} />  
+                    <Comment data={comment} key={comment._id} />  
                 ))} 
             
                 </>
