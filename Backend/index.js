@@ -11,6 +11,7 @@ const userRoutes = require("./routes/user.routes")
 const commentRoutes = require("./routes/comment.routes")
 const postRoutes = require("./routes/post.routes")
 const webhookRoutes = require("./routes/webhooks.routes")
+const authRoutes = require("./routes/auth.routes")
 const indexRoutes = require("./routes/index.routes")
 
 const ConnectDB = require("./lib/connectDB")
@@ -37,6 +38,7 @@ app.use(express.json())
 app.use('/users',userRoutes)
 app.use('/comments',commentRoutes)
 app.use('/posts', postRoutes)
+app.use('/auth', authRoutes)
 app.use('/', indexRoutes)
 
 

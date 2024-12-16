@@ -1,5 +1,6 @@
 const express = require("express")
 const User = require("../models/user.model");
+const { signUp } = require("../controller/auth.contoller");
 
 const router = express.Router();
 
@@ -20,6 +21,8 @@ router.get("/",  async (req, res) => {
 
     res.json(user)
 })
+
+router.post("/user", signUp)
 // router.delete("/:id", deleteUser)
 
 module.exports =  router;

@@ -11,8 +11,6 @@ const imagekit = new ImageKit({
     urlEndpoint :'https://ik.imagekit.io/brm83yziu'
 });
 
-
-
 const getPosts = async (req, res) => {
 
     const page = parseInt(req.query.page) || 1
@@ -32,23 +30,26 @@ const getPost = async (req, res) => {
     res.status(200).json(post)
 }
 
-
-
 const createPost = async (req, res) => {
 
-        const clerkUserId = req.auth.userId 
+        
+        const authUser = req.user;
 
-        if(!clerkUserId){
-            return res.status(401).json("not authenticated")
-        }
+        if(!authUser) return res.status(401).json({message:"User not found"})
 
-        const user = await User.findOne({ clerkUserId })
+        // if(!userId){
+        //     return res.status(401).json("not authenticated")
+        // }
+        let username = authUser.username;
+
+        // console.log(authUser)
+
+        const user = await User.findOne({ username })
 
         if(!user){
             // console.log("user not found")
             return res.status(404).json("User not found");
         }
-
 
         let slug = req.body.title.replace(/ /g, "-").toLowerCase();
         let existPost = await Post.findOne({slug});
@@ -59,8 +60,7 @@ const createPost = async (req, res) => {
             slug = `${slug}-${counter}`
             existPost = await Post.findOne({slug});
             counter++;
-        }
-       
+        }   
   
         const newPost =  new Post({user:user._id, slug, ...req.body});
         const post = await newPost.save();
@@ -83,15 +83,13 @@ const deletePost = async (req, res) => {
         return res.status(403).json("You can delete only your posts");
     }
     
-    res.status(200).json("post has been deleted")
+    return res.status(200).json("post has been deleted")
 }
-
 
 const uploadAuth =  (req, res) => {
     var result =  imagekit.getAuthenticationParameters();
     console.log(result)
-        res.send(result)
-   
+        res.send(result)   
 }
 
 
