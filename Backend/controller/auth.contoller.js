@@ -66,19 +66,20 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
 
-    const {email, password} = req.body;
-
+    
+    const email = req.body.email;
+    const password = req.body.password;
+    console.log(req.body)
     if(!email || !password){
-        return res.status(400).json({error:"Emmail and password is required"})
+        return res.status(400).json({error:"Email and password is required"})
     }
 
+    console.log("Login")
     const user = await Auth.findOne({email});
 
     if(!user){
-        return res.status(401).json({error:"User does not exist"})
+        return res.status(400).json({error:"User does not exist"})
     }
-
-   
 
     const match = await verifyPassword(password, user.password);
 
@@ -95,11 +96,11 @@ const signIn = async (req, res) => {
         }
     )
 
-        return res.status(201).json({email, token, success:"User Login Success"})
+        return res.status(201).json({success:"User Login Success"})
     }else{
         return res.status(400).json({error:"Invalid Credentials"})
     }
-    zz
+    
 }
 
 const logout = (req, res) => {
@@ -116,12 +117,12 @@ const verifyTokenMiddleware = (req, res, next) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
 
-    if (!token) return res.status(401).json({ message: "Token missing" });
+    if (!token) return res.status(401).json({session:false, message: "Token missing" });
 
-    if(blacklist.has(token)) return res.status(401).json({message: "User Session is no longer Valid"})
+    if(blacklist.has(token)) return res.status(401).json({session:false, message: "User Session is no longer Valid"})
 
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-        if (err) return res.status(403).json({ message: "Invalid token" });
+        if (err) return res.status(403).json({session:false, message: "Invalid token"});
 
         req.user = user; // Attach decoded token payload to request object
         next(); // Proceed to the next middleware or route handler

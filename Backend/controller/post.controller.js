@@ -19,7 +19,7 @@ const getPosts = async (req, res) => {
     const posts = await Post.find().populate("user", "username")
         .limit(limit)
         .skip((page-1)*limit);
-    
+    console.log(posts)
     const totalPosts = await Post.countDocuments();
     const hasMore = page * limit < totalPosts;
     res.status(200).json({posts, hasMore})
@@ -31,25 +31,14 @@ const getPost = async (req, res) => {
 }
 
 const createPost = async (req, res) => {
-
-        
+    // Check if user is Authenticated
         const authUser = req.user;
-
-        if(!authUser) return res.status(401).json({message:"User not found"})
-
-        // if(!userId){
-        //     return res.status(401).json("not authenticated")
-        // }
+        if(!authUser) return res.status(401).json({message:"Not Authorised to Post"})
         let username = authUser.username;
-
-        // console.log(authUser)
-
         const user = await User.findOne({ username })
 
-        if(!user){
-            // console.log("user not found")
-            return res.status(404).json("User not found");
-        }
+        if(!user) return res.status(404).json("User not found");
+        
 
         let slug = req.body.title.replace(/ /g, "-").toLowerCase();
         let existPost = await Post.findOne({slug});
@@ -67,15 +56,17 @@ const createPost = async (req, res) => {
        
         console.log(post)
         res.status(200).json(post)
-        
-    
 }
 
 const deletePost = async (req, res) => {
 
-    const clerkUserId = req.auth.userId 
+    // Check if user is Authenticated
+    const authUser = req.user;
+    if(!authUser) return res.status(401).json({message:"Not Authorised to Post"})
+    let username = authUser.username;
+    const user = await User.findOne({ username })
 
-    const user = await User.findOne({clerkUserId})
+    if(!user) return res.status(404).json("User not found");
 
     const dpost = await Post.findByIdAndDelete({id:req.params.id, user:user._id});
 

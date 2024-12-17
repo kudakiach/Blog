@@ -44,7 +44,8 @@ const Comments = ({postId}) => {
            return await axios.post(`http://localhost:3000/comments/${postId}`, newComment,
             { 
              headers: {
-                Authorization:`Bearer ${session}`
+                Authorization:`Bearer ${session}`,
+                
              }
  
             }

@@ -33,7 +33,7 @@ const PostListItem = ({post}) => {
                 </Link>
                 <div className="flex items-center gap-2 text-sm">
                     <span>Writen By</span>
-                    <Link className="text-blue-500">{post.user.username.split("@")[0]}</Link>
+                    <Link className="text-blue-500">{}</Link>
                     <span >On</span>
                     <Link className="text-blue-800">{post.category}</Link>
                     <span className="text-gray-600">{format(post.createdAt)}</span>

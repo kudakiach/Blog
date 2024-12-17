@@ -11,7 +11,7 @@ import RegisterPage from "./routes/RegisterPage.jsx"
 import LoginPage from "./routes/LoginPage"
 import MainLayout from './Layouts/mainLayout.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
-
+import AuthProvider from './context/authContext.jsx'
 
 
 import {
@@ -70,16 +70,17 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>
+  <AuthProvider>
     
-    
+ 
+  
      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
       <RouterProvider router={router} />
-      <ToastContainer position='bottom-right' />
+      <ToastContainer position='bottom-left' />
     </ClerkProvider>
     <ReactQueryDevtools initialIsOpen={false} />
+    </AuthProvider>
     </QueryClientProvider>
-    
-  
     
  
 )

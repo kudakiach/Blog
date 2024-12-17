@@ -16,15 +16,7 @@ const fetchPosts = async(pageParam) => {
 
 const PostList = () => {
 
-    // useEffect( () => {
-    //     fetchPosts();
-    // })
-
-    // const { isLoading, error, data } = useQuery({
-    //     queryKey: ['repoData'],
-    //     queryFn: () =>  fetchPosts,
-    //   })
-
+    
     const {
         data,
         error,

@@ -1,5 +1,5 @@
 import { useAuth, useUser } from "@clerk/clerk-react"
-import React, {useEffect, useState} from "react"
+import React, {useContext, useEffect, useState} from "react"
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useMutation} from '@tanstack/react-query'
@@ -9,12 +9,13 @@ import { FaBeer, FaImage, FaYoutube } from "react-icons/fa";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Uploads from "../Components/uploads";
+import { AuthContext } from "../context/authContext";
 
 
 const Write =  () => {
 
     const [detail, setDetail] = useState('');
-    const [session, setSession] = useState('')
+    const [session, setSession] = useState(localStorage.getItem('token'))
     const [cover, setCover] = useState('')
     const [value, setValue] = useState("")
     const [img, setImg] = useState("")
@@ -24,6 +25,7 @@ const Write =  () => {
     const {isLoaded, isSignedIn, getToken} = useAuth();
     const navigate = useNavigate();
 
+    const {isValid, setIsValid} = useContext(AuthContext)
 
     useEffect( () =>{
         img && setValue( prev => prev +`<p><img className"" src="${img.url}" /> </p>` )
@@ -33,13 +35,11 @@ const Write =  () => {
         video && setValue( prev => prev +`<p><iframe class="ql-video" src="${video.url}" /> </p>` )
     }, [video])
 
-    getToken().then(token=>setSession(token));
-    console.log(session)
+    
+    
     const mutation =  useMutation({
         
         mutationFn: async (newPost) => {
-            
-            
            return await axios.post(`http://localhost:3000/posts`, newPost,
             { 
              headers: {
@@ -60,7 +60,7 @@ const Write =  () => {
         return <div>Loading...</div>
     }
  
-    if(isLoaded && !isSignedIn) {
+    if(isLoaded && !isValid) {
         return <div>You are not sign in</div>
     }
     

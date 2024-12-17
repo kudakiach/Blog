@@ -13,18 +13,15 @@ const getComments = async (req, res) => {
 
 
 const addComment = async (req, res) => {
-        const clerkUserId = req.auth.userId 
-        const postId = req.params.postid
-        if(!clerkUserId){
-            return res.status(401).json("not authenticated")
-        }
+        // Check if user is Authenticated
+        const authUser = req.user;
+        if(!authUser) return res.status(401).json({message:"Not Authorised to Post"})
+        let username = authUser.username;
+        const user = await User.findOne({ username })
 
-        const user = await User.findOne({ clerkUserId })
+        if(!user) return res.status(404).json("User not found");
 
-        if(!user){
-            // console.log("user not found")
-            return res.status(404).json("User not found");
-        }
+        
         const newComment =  new Comment({user:user._id, post:postId, ...req.body});
         const comment = await newComment.save();
        
@@ -38,9 +35,13 @@ const addComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
 
-    const clerkUserId = req.auth.userId 
+    // Check if user is Authenticated
+    const authUser = req.user;
+    if(!authUser) return res.status(401).json({message:"Not Authorised to Post"})
+    let username = authUser.username;
+    const user = await User.findOne({ username })
 
-    const user = await User.findOne({clerkUserId})
+    if(!user) return res.status(404).json("User not found");
 
     const delComment = await Post.findByIdAndDelete({id:req.params.id, user:user._id});
 
