@@ -1,4 +1,4 @@
-const Auth = require("../models/auth.model")
+const User = require("../models/user.model")
 const bcrypt = require('bcrypt');
 require("dotenv").config(); 
 const jwt = require("jsonwebtoken");
@@ -34,7 +34,7 @@ const signUp = async (req, res) => {
         return res.status(400).json({error:"Password cannot be empty"})
     }
     
-    const user = await Auth.findOne({ email })
+    const user = await User.findOne({ email })
 
     if(user) {
         res.status(403).json({error:"User Exist"})
@@ -43,7 +43,7 @@ const signUp = async (req, res) => {
     const hash = await hashPassword(password);
     
     // console.log(hash)
-    const newUser = new Auth({
+    const newUser = new User({
         firstname:firstname,
         lastname:lastname,
         email:email,
@@ -75,7 +75,7 @@ const signIn = async (req, res) => {
     }
 
     console.log("Login")
-    const user = await Auth.findOne({email});
+    const user = await User.findOne({email});
 
     if(!user){
         return res.status(400).json({error:"User does not exist"})
@@ -92,11 +92,11 @@ const signIn = async (req, res) => {
         }, 
         process.env.JWT_SECRET_KEY,
         {
-            expiresIn:'24h'
+            expiresIn:'1h'
         }
     )
 
-        return res.status(201).json({success:"User Login Success"})
+        return res.status(201).json({token, success:"User Login Success"})
     }else{
         return res.status(400).json({error:"Invalid Credentials"})
     }

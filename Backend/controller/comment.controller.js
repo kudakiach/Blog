@@ -22,7 +22,7 @@ const addComment = async (req, res) => {
         if(!user) return res.status(404).json("User not found");
 
         
-        const newComment =  new Comment({user:user._id, post:postId, ...req.body});
+        const newComment =  new Comment({user:user._id, post:req.params.postid, ...req.body});
         const comment = await newComment.save();
        
        

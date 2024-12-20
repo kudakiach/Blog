@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const userSchema =  new Schema({
+const authSchema =  new Schema({
     firstname:{
         type:String,
-        required:true
+        
     },
     lastname:{
         type:String,
-        required:true
+        
     },
     username: {
         type:String,
@@ -35,4 +35,4 @@ const userSchema =  new Schema({
 
 )
 
-module.exports = mongoose.model("Auth", userSchema);
+module.exports = mongoose.model("Auth", authSchema);

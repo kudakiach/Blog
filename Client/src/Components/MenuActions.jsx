@@ -1,26 +1,111 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
+import {useQuery, useMutation} from "@tanstack/react-query"
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const MenuActions = () => {
+
+
+const MenuActions = ({post}) => {
+
+    const {user, isValid, token} = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const { isPending, error, data:savedPosts } = useQuery({
+        queryKey: ["savedPosts"],
+        queryFn: async () => {
+            return axios.get(`${import.meta.env.VITE_API_URL}/users/saved`, {
+                headers: {
+                    Authorization:`Bearer ${token}`
+                }
+            })
+        },
+       
+    })
+
+    console.log(savedPosts)
+    
+    const isSaved = savedPosts?.data?.some((p) => p === post._id)
+    console.log(isSaved)
+
+    const savedMutation = useMutation({
+        mutationFn: async () => {
+            return axios.patch(`${import.meta.env.VITE_API_URL}/users/saved`, {postId:post._id}, {
+                headers: {
+                    Authorization:`Bearers ${token}`
+                }
+            });
+        },
+        onSuccess: () => {
+            toast.success(isSaved ? "Post Unsaved": "post saved");
+          
+        },
+        onError: (err) => {
+            toast.error("Failed to save post" + err);
+        }
+    })
+
+    const deleteMutation = useMutation({
+        mutationFn: async () => {
+            return axios.delete(`${import.meta.env.VITE_API_URL}/posts/${post._id}`, {
+                headers: {
+                    Authorization:`Bearers ${token}`
+                }
+            });
+        },
+        onSuccess: () => {
+            toast.success("Post deleted");
+            navigate('/');
+        },
+        onError: (err) => {
+            toast.error("Failed to Delete post" + err);
+        }
+    })
+
+
+    const handlePostSave = () =>{
+        savedMutation.mutate();
+    };
+
+    const handlePostDelete = () =>{
+        deleteMutation.mutate()
+    };
 
     return(
         <div className="mt-3">
             <h1 className="font-semibold">Actions</h1>
-            <div className="flex gap-4">
-            <svg
-                    viewBox="0 0 24 24"
-                    width={20}
-                    height={20}
-                    stroke="gray"
-                >
-                <path d="M 10 4C10.3 4, 9, 5.3 9 7v34l15-9 15 9v7c0-1.7-1.3-3-3-3H12z" fill="red" stroke="black"/>
-                </svg> 
-            <Link> Save this Post</Link>
-            </div>
-            <div className="flex gap-4">
-            <img src="delete.svg" />
-            <Link className="text-red-400">Delete this Post</Link>
-            </div>                        
+            {
+                isPending ? ("Loading...") : error ? ("Saved post fetch failed") : (
+                    <><div className="flex py-2 text-sm cursor-pointer gap-2">
+               <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+
+    onClick={handlePostSave}
+  >
+    <path 
+        d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm0 16h14M7 3v4h10V3"
+        fill={ isSaved ? "black" : "none"} 
+    />
+    </svg>
+                    <span > Save this Post</span>
+                    </div>
+                    <div className="flex py-2 text-sm cursor-pointer gap-2">
+                    <img src="delete.svg" onClick={handlePostDelete}  />
+                    { deleteMutation.isPending ? <span>Delete In progress...</span> : <span className="text-red-400">Delete this Post</span> }
+                    </div>       
+                    </>
+                )
+            }
+                             
         </div>
     )
 }

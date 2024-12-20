@@ -7,12 +7,13 @@ const ImageKit = require('imagekit');
 
 
 // Routers
-const userRoutes = require("./routes/user.routes")
+
 const commentRoutes = require("./routes/comment.routes")
 const postRoutes = require("./routes/post.routes")
 const webhookRoutes = require("./routes/webhooks.routes")
 const authRoutes = require("./routes/auth.routes")
 const indexRoutes = require("./routes/index.routes")
+const userRoutes = require("./routes/user.routes")
 
 const ConnectDB = require("./lib/connectDB")
 

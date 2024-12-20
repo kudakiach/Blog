@@ -12,7 +12,7 @@ router.get("/auth", uploadAuth)
 router.get("/",  getPosts)
 router.get("/:slug", getPost)
 router.post("/", verifyTokenMiddleware, createPost)
-router.delete("/:id", deletePost)
+router.delete("/:id", verifyTokenMiddleware, deletePost)
 
 
 

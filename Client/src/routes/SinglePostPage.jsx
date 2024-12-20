@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Link, useParams } from "react-router-dom"
 import ImageKit from "../Components/Image"
 import MenuActions from "../Components/MenuActions"
@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { format } from 'timeago.js'
 import DisplayContent from "../Components/DisplayContent"
+import { AuthContext } from "../context/authContext"
 
 const fetchPost = async (slug) => {
     const res = await axios.get(`http://localhost:3000/posts/${slug}`)
@@ -28,24 +29,27 @@ const SinglePostPage = () => {
         queryFn: () => fetchPost(slug),
     })
 
+    const {isValid, user} = useContext(AuthContext) 
+
+  
 
     if (isPending) return "Loading..."
     if (error) return "Something went wrong" + error.message
     if (!data) return "Post not Found"
 
     return (
-        <div className="flex flex-col">
-            <div className="flex flex-row gap-8">
+        <div className="flex flex-col justify-center">
+            <div className="flex flex-row gap-8" >
                 <div className="flex flex-col gap-4 lg:w-3/5">
                     <h1 className="text-xl md:text-3xl lg:text-4xl font-semibold">
                         {data.title}
                     </h1>
                     <div className="flex items-center gap-2 text-sm">
                         <span>Writen By</span>
-                        <Link className="text-blue-500">{data.user.username.split("@")[0]}</Link>
+                        <Link className="text-blue-500">{data.user?.username}</Link>
                         <span >On</span>
                         <Link className="text-blue-800">{data.category}</Link>
-                        <span className="text-gray-600">2{format(data.createdAt)}</span>
+                        <span className="text-gray-600">{format(data.createdAt)}</span>
                     </div>
                     <p className="text-sm">
                         {data.desc}</p>
@@ -62,8 +66,8 @@ const SinglePostPage = () => {
                 </div>}
             </div>
 
-            <div className="flex gap-8 mt-8">
-                <div className="flex flex-col w-2/3">
+            <div className="flex gap-8 mt-8 flex-col md:flex-row">
+                <div className="flex flex-col md:w-2/3">
 
                     <div>
                         <DisplayContent content={data.content} />
@@ -76,7 +80,7 @@ const SinglePostPage = () => {
 
 
                 </div>
-                <div className="px-4 sticky h-max top-8 w-1/3">
+                <div className="px-4 sticky h-max top-8 md:w-1/3">
                     <h1 className="font-semibold">Author</h1>
                     <div className="flex flex-row gap-4 mt-2 items-center">
                         {data.user.img && <ImageKit
@@ -85,10 +89,11 @@ const SinglePostPage = () => {
                             className="w-12 h-12 rounded-full aspect-video object-cover"
                             w={48}
                             h={48}
-                            description={data.user.username.split("@") + "-img"}
+                            description={data.user?.username + "-img"}
                         />}
 
-                        <Link className="text-blue-700"> {data.user.username.split("@")[0]}</Link>
+                        {data.user?.username && <Link className="text-blue-700"> 
+                        {data.user?.username}</Link>}
 
                     </div>
                     <p className="text-xs mt-1">
@@ -99,7 +104,7 @@ const SinglePostPage = () => {
                         <img src="instagram.svg" />
                     </div>
                     {/* Action */}
-                    <MenuActions />
+                    {isValid && user.username == data.user.username && <MenuActions post={data} />}
 
                     {/* Category */}
 
@@ -112,8 +117,11 @@ const SinglePostPage = () => {
                     </div>
 
                     {/* Search */}
+                    <div className="hidden md:block">
                     <h1 className="mt-4">Search</h1>
                     <Search />
+                    </div>
+                   
                 </div>
 
             </div>

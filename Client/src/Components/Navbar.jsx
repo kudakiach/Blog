@@ -17,8 +17,10 @@ const Navbar = () => {
    
     const [open, setOpen] = useState(false);
     
-    const {isValid, setIsValid} = useContext(AuthContext);
+    const {isValid, setIsValid, user} = useContext(AuthContext);
     const navigate = useNavigate();
+
+    console.log(" User: ", user)
 
     const logout = () =>{
         console.log("Logged out...")
@@ -33,7 +35,7 @@ const Navbar = () => {
             {/* Logo */}
             <Link to='/' className="flex items-center gap-4 text-2xl font-bold" >
 
-                <img src="logo.png" alt="kuda logo" className="w-8 h-8" />
+                <img src="Logo.png" alt="kuda logo" className="w-8 h-8" />
                 <span className="bg-blue-800 py-1 px-2 rounded-xl text-red-200">KudaBlog</span>
             </Link>
             {/* MoBile view */}
@@ -51,11 +53,10 @@ const Navbar = () => {
                     <Link to='/'>About</Link>
 
                     
-                    <button onClick={() => logout} className="py-2 px-4 rounded-3xl  bg-red-500  text-white">Logout</button>
-                    
-                    <Link to='login'>
-                        <button className="py-2 px-4 rounded-3xl  bg-green-500  text-white">login</button>
-                    </Link>
+                    {isValid && user.username?<button onClick={logout} className="py-2 px-4 rounded-3xl  bg-red-500  text-white">Logout</button>
+                   :<Link to='login'>
+                        <button className="py-2 px-4 rounded-3xl  bg-green-500  text-white">Login</button>
+                    </Link>}
 
 
                 </div>
@@ -68,7 +69,7 @@ const Navbar = () => {
                 <Link to='/'>Most Popular</Link>
                 <Link to='/'>About</Link>
                 
-                    {isValid?<button onClick={logout} className="py-2 px-4 rounded-3xl  bg-red-500  text-white">Logout</button>
+                    {isValid && user.username?<button onClick={logout} className="py-2 px-4 rounded-3xl  bg-red-500  text-white">Logout</button>
                    :<Link to='login'>
                         <button className="py-2 px-4 rounded-3xl  bg-green-500  text-white">Login</button>
                     </Link>}

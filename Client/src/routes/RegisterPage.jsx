@@ -1,11 +1,12 @@
 import React from "react"
-import { SignUp } from "@clerk/clerk-react"
+import Register from '../Components/signUp'
+
 
 
 const RegisterPage = () => {
     return(
         <div>
-            <SignUp />
+            <Register />
         </div>
     )
 }

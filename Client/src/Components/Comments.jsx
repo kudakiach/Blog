@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from 'axios'
 import { useParams } from "react-router-dom";
 import { useQuery, QueryClient, useQueryClient, useMutation  } from "@tanstack/react-query"
 import Comment from "./Comment";
 import { toast } from "react-toastify";
 import { useAuth, useUser,  } from "@clerk/clerk-react";
+import { AuthContext } from "../context/authContext";
+import { jwtDecode } from "jwt-decode";
 
 
 
@@ -20,10 +22,12 @@ const Comments = ({postId}) => {
    
     const {isLoaded, isSignedIn, getToken} = useAuth();
     const [session, setSession] = useState("");
+    const {isValid, setIsValid, token} = useContext(AuthContext)
     // const [comments, setComments] = useState({comment:''})
-  
     
-    const { user } = useUser();
+    const ls = localStorage.getItem('token')
+    const user  = jwtDecode(token);
+    console.log(user)
     
     const { isPending, error, data } = useQuery({
         queryKey: ["comments", postId],
@@ -31,10 +35,7 @@ const Comments = ({postId}) => {
     })
 
    
-    getToken().then( token=>
-        setSession(token)
-    )
-
+    
     const queryClient = useQueryClient();
     const mutation =  useMutation({
        
@@ -44,7 +45,7 @@ const Comments = ({postId}) => {
            return await axios.post(`http://localhost:3000/comments/${postId}`, newComment,
             { 
              headers: {
-                Authorization:`Bearer ${session}`,
+                Authorization:`Bearer ${token}`,
                 
              }
  
@@ -106,7 +107,7 @@ const Comments = ({postId}) => {
                             comment: `${mutation.variables.comment} (Sending...)`,
                             createdAt: new Date(),
                             user: {
-                                img: user.imageUrl,
+                                img: user.img,
                                 username:user.username,
                             },
                             
