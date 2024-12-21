@@ -88,7 +88,8 @@ const signIn = async (req, res) => {
         { 
             _id:user._id,
             username:user.username,
-            email:email
+            email:email,
+            role:user?.role || 'user'
         }, 
         process.env.JWT_SECRET_KEY,
         {

@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { IKImage } from "imagekitio-react"
 import ImageKit from "./Image";
 import { Link } from "react-router-dom";
-import {jwtDecode} from 'jwt-decode'
+
 import axios from 'axios'
 import useMutationHook from "../hook/useLoginMutation";
 import {useMutation,useQueryClient} from '@tanstack/react-query'
-import { useContext } from "react";
+
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
@@ -17,16 +17,16 @@ const Navbar = () => {
    
     const [open, setOpen] = useState(false);
     
-    const {isValid, setIsValid, user} = useContext(AuthContext);
+    const {token, setToken, user, setUser} = useContext(AuthContext);
     const navigate = useNavigate();
 
-    console.log(" User: ", user)
+    const isAdmin = user?.role === 'admin';
+    const isUser = user?.role === 'user'
 
     const logout = () =>{
-        console.log("Logged out...")
-        localStorage.setItem('token', null);
-        setIsValid(false);
+       
         localStorage.removeItem('token')
+        setUser(null)
         navigate('/login')
     }
     
@@ -53,7 +53,7 @@ const Navbar = () => {
                     <Link to='/'>About</Link>
 
                     
-                    {isValid && user.username?<button onClick={logout} className="py-2 px-4 rounded-3xl  bg-red-500  text-white">Logout</button>
+                    { user && user?.username ? <button onClick={logout} className="py-2 px-4 rounded-3xl  bg-red-500  text-white">Logout</button>
                    :<Link to='login'>
                         <button className="py-2 px-4 rounded-3xl  bg-green-500  text-white">Login</button>
                     </Link>}
@@ -69,7 +69,7 @@ const Navbar = () => {
                 <Link to='/'>Most Popular</Link>
                 <Link to='/'>About</Link>
                 
-                    {isValid && user.username?<button onClick={logout} className="py-2 px-4 rounded-3xl  bg-red-500  text-white">Logout</button>
+                    {user && user.username?<button onClick={logout} className="py-2 px-4 rounded-3xl  bg-red-500  text-white">Logout</button>
                    :<Link to='login'>
                         <button className="py-2 px-4 rounded-3xl  bg-green-500  text-white">Login</button>
                     </Link>}

@@ -10,27 +10,18 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-  const [token, setToken] = useState(localStorage.getItem('token'))
-  const [isValid, setIsValid] = useState(false);
-  const [user, setUser] = useState(jwtDecode(token));
-
+  const [token, setToken] = useState('')
+  const [user, setUser] = useState();
+  
   useEffect(() => {
-    try {
-      let decodedToken= jwtDecode(token);
-      setUser(decodedToken)
-      let currentDate = new Date();
-      console.log(user)
-      if (user.exp * 1000 < currentDate.getTime()) {
-        console.log("Token expired.");
-      } else {
-        console.log("Valid token");
-        setIsValid(true)
-      }
-    } catch (err) {
-      setIsValid(false)
+    try{
+      setToken(localStorage.getItem('token'))
+      setUser(jwtDecode(token))
+    }catch(err){
       console.log(err)
     }
-
+      
+    
   }, [token]);
 
 
@@ -39,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isValid, setIsValid, token, user }}>
+      value={{ token, user, setToken, setUser}}>
       {children}
     </AuthContext.Provider>
   )

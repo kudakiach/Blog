@@ -7,12 +7,13 @@ import useMutationHook from '../hook/useLoginMutation'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/authContext'
 import Notification from './Notification'
+import { jwtDecode } from 'jwt-decode'
 
 const LoginIn = () => {
 
   const mutation =  useMutationHook('signin');
   const navigate = useNavigate();
-  const {isValid, setIsValid} = useContext(AuthContext);
+  const {setUser, setToken} = useContext(AuthContext);
   const [error, setError] = useState(null);
 
 
@@ -39,7 +40,7 @@ const LoginIn = () => {
       onSuccess: (res) => {
         console.log(res.data)
         localStorage.setItem('token', res.data.token)
-        setIsValid(true)
+        setUser(jwtDecode(res.data.token))
         navigate('/')
       }
     }

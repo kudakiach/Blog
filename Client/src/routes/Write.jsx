@@ -1,4 +1,4 @@
-import { useAuth, useUser } from "@clerk/clerk-react"
+
 import React, {useContext, useEffect, useState} from "react"
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -21,11 +21,13 @@ const Write =  () => {
     const [img, setImg] = useState("")
     const [video, setVideo] = useState("")
     const [progress, setProgress] = useState(0);
+    const {token, setToken, user, setUser} = useContext(AuthContext)
    
-    const {isLoaded, isSignedIn, getToken} = useAuth();
+   
     const navigate = useNavigate();
 
-    const {isValid, setIsValid} = useContext(AuthContext)
+    
+   
 
     useEffect( () =>{
         img && setValue( prev => prev +`<p><img className"" src="${img.url}" /> </p>` )
@@ -40,10 +42,11 @@ const Write =  () => {
     const mutation =  useMutation({
         
         mutationFn: async (newPost) => {
+            let ls = localStorage.getItem("token");
            return await axios.post(`http://localhost:3000/posts`, newPost,
             { 
              headers: {
-                Authorization:`Bearer ${session}`
+                Authorization:`Bearer ${ls}`
              }
  
             }
@@ -56,11 +59,11 @@ const Write =  () => {
          }
      })
     
-    if(!isLoaded) {
-        return <div>Loading...</div>
-    }
+    // if(!isLoaded) {
+    //     return <div>Loading...</div>
+    // }
  
-    if(isLoaded && !isValid) {
+    if(!user && !user?.username) {
         return <div>You are not sign in</div>
     }
     

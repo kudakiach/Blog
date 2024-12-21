@@ -22,12 +22,10 @@ const Comments = ({postId}) => {
    
     const {isLoaded, isSignedIn, getToken} = useAuth();
     const [session, setSession] = useState("");
-    const {isValid, setIsValid, token} = useContext(AuthContext)
+    const {setUser, user, token} = useContext(AuthContext)
     // const [comments, setComments] = useState({comment:''})
+ 
     
-    const ls = localStorage.getItem('token')
-    const user  = jwtDecode(token);
-    console.log(user)
     
     const { isPending, error, data } = useQuery({
         queryKey: ["comments", postId],

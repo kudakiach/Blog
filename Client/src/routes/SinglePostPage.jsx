@@ -29,7 +29,7 @@ const SinglePostPage = () => {
         queryFn: () => fetchPost(slug),
     })
 
-    const {isValid, user} = useContext(AuthContext) 
+    const {token, user} = useContext(AuthContext) 
 
   
 
@@ -104,7 +104,7 @@ const SinglePostPage = () => {
                         <img src="instagram.svg" />
                     </div>
                     {/* Action */}
-                    {isValid && user.username == data.user.username && <MenuActions post={data} />}
+                    {user  && user.username ? <MenuActions post={data} />: ""}
 
                     {/* Category */}
 

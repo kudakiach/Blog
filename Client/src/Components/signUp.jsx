@@ -4,14 +4,14 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import useMutationHook from '../hook/useLoginMutation'
 import { Link, useNavigate } from 'react-router-dom'
-import { AuthContext } from '../context/authContext'
+
 import Notification from './Notification'
 
 const Register = () => {
 
   const mutation =  useMutationHook('signup');
   const navigate = useNavigate();
-  const {isValid, setIsValid} = useContext(AuthContext);
+
   const [error, setError] = useState(null);
 
 
